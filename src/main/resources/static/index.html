@@ -3,112 +3,164 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#101827">
-  <title>AuraPay | Simple, transparent checkout</title>
-  <meta name="description" content="AuraPay checkout prototype for AuraVision AI. Demo mode only; real payments are disabled.">
+  <meta name="theme-color" content="#f7f9fc">
+  <title>AuraPay Dashboard</title>
+  <meta name="description" content="AuraPay merchant dashboard prototype. Development mode only; real payments are disabled.">
   <style>
-    :root{color-scheme:dark;--bg:#0b1220;--panel:#121d30;--panel2:#17243a;--text:#eef4ff;--muted:#9eacc3;--line:#293851;--accent:#73e0c1;--accent2:#b8f5e5}
-    *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 85% 0%,#183b46 0,transparent 35%),var(--bg);color:var(--text);font:16px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-    a{color:inherit}.wrap{width:min(1100px,calc(100% - 36px));margin:auto}.nav{display:flex;align-items:center;justify-content:space-between;padding:22px 0;border-bottom:1px solid var(--line)}.brand{display:flex;gap:10px;align-items:center;font-weight:800;font-size:1.2rem;letter-spacing:-.04em}.logo{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:var(--accent);color:#08231e;font-weight:900;font-size:1.15rem}.navtag{color:var(--muted);font-size:.9rem}
-    .demo{display:inline-flex;align-items:center;gap:8px;border:1px solid #715d31;color:#ffdf91;background:#332a18;border-radius:999px;padding:7px 12px;font-size:.78rem;font-weight:750;letter-spacing:.04em;text-transform:uppercase}.dot{width:7px;height:7px;border-radius:50%;background:#ffcf66}
-    .hero{padding:76px 0 42px;max-width:790px}.eyebrow{color:var(--accent);font-size:.82rem;text-transform:uppercase;letter-spacing:.14em;font-weight:800}.hero h1{font-size:clamp(2.6rem,7vw,5rem);line-height:1.02;letter-spacing:-.065em;margin:16px 0 22px}.hero h1 span{color:var(--accent)}.hero p{color:var(--muted);font-size:1.12rem;max-width:630px;margin:0 0 24px}
-    .section-head{display:flex;justify-content:space-between;gap:20px;align-items:end;margin:24px 0 18px}.section-head h2{font-size:1.55rem;letter-spacing:-.035em;margin:0}.section-head p{margin:5px 0 0;color:var(--muted);font-size:.93rem}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.pack{background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:20px;padding:24px;display:flex;flex-direction:column;min-height:260px}.pack.featured{border-color:#4b9e8a;box-shadow:0 0 0 1px #4b9e8a22}.pack h3{margin:0;font-size:1.2rem}.pack .credits{font-size:2.25rem;letter-spacing:-.05em;font-weight:800;margin:15px 0 0}.pack .unit{font-size:.88rem;color:var(--muted);font-weight:500;letter-spacing:0}.price{font-size:1.15rem;margin:2px 0 20px}.price strong{font-size:1.7rem}.pack button,.btn{border:0;border-radius:12px;background:var(--accent);color:#09251f;padding:12px 15px;font-weight:800;font-size:.95rem;cursor:pointer;text-decoration:none;display:inline-flex;justify-content:center;align-items:center;gap:8px}.pack button:hover,.btn:hover{background:var(--accent2)}button:disabled{opacity:.55;cursor:wait}.pack button{margin-top:auto;width:100%}.note{margin:22px 0 0;border:1px solid var(--line);background:#101a2a;border-radius:14px;padding:14px 16px;color:var(--muted);font-size:.9rem}.note strong{color:var(--text)}.status{display:none;margin-top:18px;background:#101a2a;border:1px solid var(--line);border-radius:16px;padding:18px;overflow-wrap:anywhere}.status.show{display:block}.status h3{margin:0 0 6px}.status pre{white-space:pre-wrap;overflow-wrap:anywhere;color:#c3d6e9;font-size:.84rem}.status .small{color:var(--muted);font-size:.85rem}.footer{margin-top:64px;padding:24px 0 36px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:16px;color:var(--muted);font-size:.86rem}.links{display:flex;gap:18px;flex-wrap:wrap}.links a{text-decoration:none}.links a:hover{color:var(--accent)}
-    @media(max-width:760px){.grid{grid-template-columns:1fr}.hero{padding-top:52px}.pack{min-height:unset}.section-head{align-items:start;flex-direction:column}.footer{flex-direction:column}.navtag{display:none}}
+    :root{color-scheme:light;--bg:#f6f8fb;--surface:#fff;--text:#202b3c;--muted:#718096;--line:#e4e9f0;--blue:#2457d6;--blue-hover:#1e49b5;--nav:#14233b;--green:#16845b;--amber:#93620c;--amber-bg:#fff6df;--shadow:0 2px 8px rgba(25,42,70,.035)}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}button,input{font:inherit}a{color:inherit;text-decoration:none}button{cursor:pointer}
+    .app{min-height:100vh}.sidebar{position:fixed;inset:0 auto 0 0;width:238px;background:var(--nav);color:#eaf0fb;padding:22px 14px;display:flex;flex-direction:column;z-index:5}.brand{display:flex;align-items:center;gap:11px;padding:0 11px 28px;font-size:19px;font-weight:750;letter-spacing:-.4px}.brand-mark{display:grid;place-items:center;width:33px;height:33px;border-radius:8px;background:#fff;color:#1c3e85;font-size:17px;font-weight:850}.brand small{display:block;color:#aab9d1;font-size:10px;font-weight:500;letter-spacing:.6px;text-transform:uppercase;margin-top:-2px}
+    .workspace{margin:0 7px 21px;padding:11px 12px;border:1px solid #344762;border-radius:8px;color:#c5d1e2;font-size:12px}.workspace b{display:block;color:#fff;font-size:13px;font-weight:650}.nav-label{padding:0 12px 7px;color:#8396b4;text-transform:uppercase;font-size:10px;font-weight:750;letter-spacing:1px}.nav-list{display:grid;gap:3px}.nav-item{width:100%;display:flex;align-items:center;gap:12px;padding:10px 12px;border:0;border-radius:7px;background:transparent;color:#c4d0e2;text-align:left;font-size:13px}.nav-item .ico{width:17px;text-align:center;font-size:16px;opacity:.9}.nav-item.active{background:#263c5d;color:#fff;font-weight:650}.nav-item:hover{background:#203653}.sidebar-bottom{margin-top:auto}.side-note{margin:18px 7px 0;border-top:1px solid #34445d;padding:17px 5px 0;color:#94a6c2;font-size:11px;line-height:1.65}
+    .main{margin-left:238px;min-height:100vh}.topbar{height:66px;background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 34px;position:sticky;top:0;z-index:4}.crumb{color:var(--muted);font-size:13px}.crumb b{color:var(--text);font-weight:650}.top-actions{display:flex;align-items:center;gap:13px}.mode{display:inline-flex;align-items:center;gap:7px;padding:6px 9px;border:1px solid #f0d99a;border-radius:6px;background:var(--amber-bg);color:var(--amber);font-size:11px;font-weight:700}.mode-dot{width:6px;height:6px;border-radius:50%;background:#d49b22}.help{color:#5d6b80;font-size:12px}.avatar{width:31px;height:31px;border-radius:50%;background:#e5edff;color:#2b53a4;display:grid;place-items:center;font-weight:750;font-size:12px}
+    .content{max-width:1440px;margin:0 auto;padding:30px 34px 45px}.page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:22px}.page-head h1{font-size:25px;line-height:1.25;letter-spacing:-.7px;margin:0 0 6px;font-weight:700}.page-head p{color:var(--muted);margin:0;font-size:13px}.head-actions{display:flex;gap:9px}.btn{border:1px solid #d7deea;border-radius:6px;padding:9px 13px;background:#fff;color:#344258;font-size:12px;font-weight:650;box-shadow:0 1px 1px rgba(20,40,70,.02)}.btn:hover{background:#f6f8fc}.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}.btn.primary:hover{background:var(--blue-hover)}.btn:disabled{opacity:.6;cursor:wait}
+    .banner{display:flex;align-items:flex-start;gap:12px;padding:13px 15px;border:1px solid #f0d99a;background:var(--amber-bg);border-radius:8px;margin-bottom:22px;color:#72531b}.banner-icon{font-weight:800;font-size:15px}.banner strong{display:block;font-size:12px;margin-bottom:2px}.banner p{margin:0;font-size:12px;color:#82682f}
+    .section-title{display:flex;align-items:center;justify-content:space-between;margin:26px 0 12px}.section-title h2{font-size:15px;margin:0;font-weight:700}.section-title span{font-size:12px;color:var(--muted)}
+    .metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.metric{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:17px 18px;box-shadow:var(--shadow);min-height:123px}.metric-label{display:flex;align-items:center;justify-content:space-between;color:#617087;font-size:12px}.metric-icon{color:#6d7d95;font-size:15px}.metric-value{font-size:26px;letter-spacing:-.7px;font-weight:700;margin:13px 0 3px}.metric-foot{font-size:11px;color:var(--muted)}.metric-foot .ok{color:var(--green)}
+    .columns{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(260px,1fr);gap:16px;align-items:start}.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);min-width:0}.panel-head{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px}.panel-head h3{font-size:13px;margin:0;font-weight:700}.panel-head p{font-size:11px;color:var(--muted);margin:3px 0 0}.text-link{font-size:12px;color:var(--blue);font-weight:650}.table-wrap{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:460px}th{background:#fafbfd;text-align:left;padding:11px 16px;color:#7b8799;font-size:10px;letter-spacing:.5px;text-transform:uppercase;font-weight:700;border-bottom:1px solid var(--line)}td{padding:13px 16px;border-bottom:1px solid #edf0f5;font-size:12px;color:#526176}tr:last-child td{border-bottom:0}.empty{text-align:center;padding:29px 20px 32px}.empty-icon{width:40px;height:40px;border:1px solid var(--line);border-radius:11px;margin:0 auto 10px;display:grid;place-items:center;color:#74849a;font-size:18px;background:#fafbfd}.empty h4{font-size:13px;margin:0 0 4px;color:#344258}.empty p{font-size:11px;color:var(--muted);max-width:290px;margin:0 auto 14px}.packs{display:grid;gap:0}.pack-row{display:flex;align-items:center;gap:12px;padding:14px 17px;border-bottom:1px solid #edf0f5}.pack-row:last-child{border-bottom:0}.pack-icon{width:34px;height:34px;border-radius:8px;background:#eef3ff;color:#315bb5;display:grid;place-items:center;font-weight:750}.pack-info{flex:1;min-width:0}.pack-info strong{display:block;font-size:12px}.pack-info span{display:block;color:var(--muted);font-size:11px}.pack-price{text-align:right;font-size:12px;font-weight:700;white-space:nowrap}.pack-price button{display:block;border:0;background:none;color:var(--blue);font-size:11px;font-weight:650;padding:3px 0 0;margin-left:auto}.quick-list{display:grid;gap:10px;padding:14px}.quick{display:flex;align-items:center;gap:11px;padding:12px;border:1px solid var(--line);border-radius:7px;background:#fff;text-align:left;width:100%}.quick:hover{border-color:#b8c8e5;background:#fafcff}.quick-icon{display:grid;place-items:center;width:32px;height:32px;border-radius:7px;background:#f0f4fc;color:#355aa4;font-size:15px}.quick strong{display:block;font-size:12px;font-weight:650}.quick small{display:block;color:var(--muted);font-size:11px;margin-top:2px}.quick .arrow{margin-left:auto;color:#8795a8;font-size:17px}.order-result{display:none;margin-top:15px;padding:14px 16px;border:1px solid #cbd9f3;background:#f6f9ff;border-radius:8px}.order-result.show{display:block}.order-result strong{display:block;font-size:12px}.order-result p{font-size:11px;color:#5c6d85;margin:5px 0}.order-result pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px;color:#41516a;margin:9px 0 0}.footer{margin-top:26px;color:#8a96a7;font-size:11px;display:flex;justify-content:space-between;gap:12px}.footer a{color:#5d6b80}
+    @media(max-width:1150px){.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.columns{grid-template-columns:1fr}.sidebar{width:210px}.main{margin-left:210px}.topbar{padding:0 24px}.content{padding:26px 24px 38px}}
+    @media(max-width:700px){.sidebar{position:static;width:auto;height:auto;padding:12px 14px}.brand{padding:0 4px 12px}.workspace,.nav-label,.nav-list,.sidebar-bottom{display:none}.main{margin:0}.topbar{height:54px;padding:0 16px;position:static}.content{padding:22px 15px 30px}.page-head{flex-direction:column}.head-actions{width:100%}.metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.metric{padding:13px;min-height:112px}.metric-value{font-size:22px}.metric-label{font-size:11px}.help{display:none}.footer{flex-direction:column}.banner{padding:12px}.section-title{margin-top:22px}}
+    @media(max-width:390px){.metrics{grid-template-columns:1fr}.top-actions{gap:7px}.mode{font-size:10px}.page-head h1{font-size:23px}}
   </style>
 </head>
 <body>
-  <header class="wrap nav">
-    <a class="brand" href="/" style="text-decoration:none"><span class="logo">A</span><span>AuraPay</span></a>
-    <span class="navtag">Checkout foundation for AuraVision AI</span>
-    <span class="demo"><span class="dot"></span> Demo mode</span>
-  </header>
-  <main class="wrap">
-    <section class="hero">
-      <div class="eyebrow">Checkout, made clear</div>
-      <h1>Payments should feel <span>simple.</span></h1>
-      <p>AuraPay is being built to help AuraVision AI customers purchase image-generation credits through a clear, straightforward checkout experience.</p>
-      <span class="demo"><span class="dot"></span> Demo only · No real payments</span>
-    </section>
-    <section aria-labelledby="packs-heading">
-      <div class="section-head">
-        <div><h2 id="packs-heading">Choose a credit pack</h2><p>Sample packages for testing the order flow.</p></div>
-      </div>
-      <div id="packs" class="grid" aria-live="polite"><p style="color:var(--muted)">Loading demo packages…</p></div>
-      <div class="note"><strong>Important:</strong> These are demo orders only. No money is collected, no QR payment is initiated, and no credits are added to an AuraVision AI account. Do not enter bank or payment credentials.</div>
-      <section id="order-status" class="status" aria-live="polite">
-        <h3 id="status-title">Demo order</h3>
-        <p id="status-message" class="small"></p>
-        <pre id="order-json"></pre>
-      </section>
-    </section>
-  </main>
-  <footer class="wrap footer">
-    <span>© <span id="year"></span> AuraPay · Development prototype</span>
-    <nav class="links" aria-label="Service links">
-      <a href="/api/health">API status</a>
-      <a href="/api/credit-packs">Credit pack API</a>
-      <a href="https://github.com/Aman12357/AuraPay" target="_blank" rel="noreferrer">GitHub</a>
+<div class="app">
+  <aside class="sidebar">
+    <a class="brand" href="/" aria-label="AuraPay dashboard"><span class="brand-mark">A</span><span>AuraPay<small>Merchant dashboard</small></span></a>
+    <div class="workspace"><b>My business</b><span>Development workspace</span></div>
+    <div class="nav-label">Workspace</div>
+    <nav class="nav-list" aria-label="Main navigation">
+      <a class="nav-item active" href="/" aria-current="page"><span class="ico">▦</span>Overview</a>
+      <a class="nav-item" href="#transactions"><span class="ico">↔</span>Transactions</a>
+      <a class="nav-item" href="#credit-packs"><span class="ico">▤</span>Credit packs</a>
+      <button class="nav-item" type="button" id="orders-nav"><span class="ico">▣</span>Demo orders</button>
     </nav>
-  </footer>
-  <script>
-    const packsEl = document.getElementById('packs');
-    const statusEl = document.getElementById('order-status');
-    document.getElementById('year').textContent = new Date().getFullYear();
-    const money = paise => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(paise / 100);
-    function showError(message) {
-      packsEl.innerHTML = '<p style="color:#ffb4a9">Could not load packages. Please refresh in a moment.</p>';
-      console.error(message);
-    }
-    async function loadPacks() {
-      try {
-        const response = await fetch('/api/credit-packs', { headers: { Accept: 'application/json' } });
-        if (!response.ok) throw new Error('Credit packs request failed: ' + response.status);
-        const packs = await response.json();
-        if (!Array.isArray(packs) || packs.length === 0) throw new Error('Empty package list');
-        packsEl.replaceChildren();
-        packs.forEach((pack, index) => {
-          const article = document.createElement('article');
-          article.className = 'pack' + (index === 1 ? ' featured' : '');
-          const heading = document.createElement('h3'); heading.textContent = pack.name;
-          const credits = document.createElement('div'); credits.className = 'credits'; credits.textContent = Number(pack.credits).toLocaleString('en-IN');
-          const unit = document.createElement('span'); unit.className = 'unit'; unit.textContent = ' credits';
-          credits.appendChild(unit);
-          const price = document.createElement('p'); price.className = 'price';
-          const strong = document.createElement('strong'); strong.textContent = money(pack.amountInPaise);
-          price.appendChild(strong);
-          const button = document.createElement('button'); button.type = 'button'; button.textContent = 'Create demo order';
-          button.addEventListener('click', () => createOrder(pack, button));
-          article.append(heading, credits, price, button);
-          packsEl.appendChild(article);
-        });
-      } catch (error) { showError(error); }
-    }
-    async function createOrder(pack, button) {
-      button.disabled = true; button.textContent = 'Creating order…';
-      statusEl.classList.add('show');
-      document.getElementById('status-title').textContent = 'Creating demo order';
-      document.getElementById('status-message').textContent = 'This does not charge you or initiate a payment.';
-      document.getElementById('order-json').textContent = '';
-      try {
-        const response = await fetch('/api/orders', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify({ packId: pack.id })
-        });
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error || 'Order creation failed');
-        document.getElementById('status-title').textContent = 'Demo order created';
-        document.getElementById('status-message').textContent = 'Status is DEMO_CREATED. No payment was taken and no credits were granted.';
-        document.getElementById('order-json').textContent = JSON.stringify(data, null, 2);
-      } catch (error) {
-        document.getElementById('status-title').textContent = 'Could not create demo order';
-        document.getElementById('status-message').textContent = 'The latest backend deployment may still be in progress. Please try again shortly.';
-        document.getElementById('order-json').textContent = String(error.message || error);
-      } finally {
-        button.disabled = false; button.textContent = 'Create demo order';
+    <div class="sidebar-bottom">
+      <div class="nav-label">Developer</div>
+      <nav class="nav-list" aria-label="Developer links">
+        <a class="nav-item" href="/api/health"><span class="ico">⌘</span>API status</a>
+        <a class="nav-item" href="https://github.com/Aman12357/AuraPay" target="_blank" rel="noreferrer"><span class="ico">↗</span>GitHub repository</a>
+      </nav>
+      <div class="side-note">AuraPay is currently a development prototype. No live payment processing is enabled.</div>
+    </div>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <div class="crumb">Workspace <span style="padding:0 7px;color:#b0bac8">/</span> <b>Overview</b></div>
+      <div class="top-actions"><span class="mode"><span class="mode-dot"></span> Test environment</span><span class="help">Help &amp; support</span><span class="avatar" aria-label="Account">A</span></div>
+    </header>
+    <main class="content">
+      <div class="page-head">
+        <div><h1>Overview</h1><p>Here's the current status of your AuraPay workspace.</p></div>
+        <div class="head-actions"><button class="btn" id="refresh-btn" type="button">↻ &nbsp; Refresh data</button><button class="btn primary" id="create-top" type="button">＋ &nbsp; Create demo order</button></div>
+      </div>
+      <section class="banner" role="status">
+        <span class="banner-icon">!</span><div><strong>Test environment · Live payments are turned off</strong><p>This dashboard is for development and order-flow testing. No real transactions, settlements, or credit grants occur here.</p></div>
+      </section>
+      <div class="section-title"><h2>Account summary</h2><span>Current workspace · INR</span></div>
+      <section class="metrics" aria-label="Account summary">
+        <article class="metric"><div class="metric-label">Available balance <span class="metric-icon">◉</span></div><div class="metric-value">₹0.00</div><div class="metric-foot">No live funds are held by AuraPay</div></article>
+        <article class="metric"><div class="metric-label">Successful payments <span class="metric-icon">✓</span></div><div class="metric-value">0</div><div class="metric-foot">Live payment processing is disabled</div></article>
+        <article class="metric"><div class="metric-label">Refunds <span class="metric-icon">↶</span></div><div class="metric-value">0</div><div class="metric-foot">No live transactions to refund</div></article>
+        <article class="metric"><div class="metric-label">Payment success rate <span class="metric-icon">％</span></div><div class="metric-value">—</div><div class="metric-foot">Available after verified payment data exists</div></article>
+      </section>
+      <div class="section-title"><h2>Activity</h2><span>Live transaction data is not connected</span></div>
+      <section class="columns">
+        <article class="panel" id="transactions">
+          <div class="panel-head"><div><h3>Recent transactions</h3><p>Payments and refunds</p></div><span class="mode">Test environment</span></div>
+          <div class="empty"><div class="empty-icon">↔</div><h4>No transactions yet</h4><p>Once a verified payment provider is connected, transaction activity will appear here. Demo orders are tracked separately.</p><button class="btn primary" id="create-empty" type="button">Create demo order</button></div>
+        </article>
+        <article class="panel" id="credit-packs">
+          <div class="panel-head"><div><h3>Credit packs</h3><p>Configured demo catalogue</p></div><a class="text-link" href="/api/credit-packs">View API ↗</a></div>
+          <div class="packs" id="packs"><div class="empty"><p>Loading packages…</p></div></div>
+        </article>
+      </section>
+      <div class="section-title"><h2>Quick actions</h2><span>Development tools</span></div>
+      <section class="panel">
+        <div class="quick-list">
+          <button class="quick" id="quick-order" type="button"><span class="quick-icon">＋</span><span><strong>Create a demo order</strong><small>Test the order creation endpoint with a configured credit pack.</small></span><span class="arrow">›</span></button>
+          <a class="quick" href="/api/health"><span class="quick-icon">⌁</span><span><strong>Check API health</strong><small>See whether the AuraPay backend is responding.</small></span><span class="arrow">›</span></a>
+          <a class="quick" href="https://github.com/Aman12357/AuraPay" target="_blank" rel="noreferrer"><span class="quick-icon">⌘</span><span><strong>Open source repository</strong><small>Review the current application code on GitHub.</small></span><span class="arrow">›</span></a>
+        </div>
+      </section>
+      <section class="order-result" id="order-result" aria-live="polite"><strong id="result-title">Demo order</strong><p id="result-message"></p><pre id="result-json"></pre></section>
+      <footer class="footer"><span>© <span id="year"></span> AuraPay. Development dashboard.</span><span><a href="/api/health">API status</a> &nbsp;·&nbsp; <a href="/api/credit-packs">Credit pack API</a> &nbsp;·&nbsp; <a href="https://github.com/Aman12357/AuraPay" target="_blank" rel="noreferrer">GitHub</a></span></footer>
+    </main>
+  </div>
+</div>
+<script>
+  const packsEl = document.getElementById('packs');
+  const resultEl = document.getElementById('order-result');
+  document.getElementById('year').textContent = new Date().getFullYear();
+  const money = paise => new Intl.NumberFormat('en-IN', {style:'currency',currency:'INR',maximumFractionDigits:2}).format(Number(paise)/100);
+  let currentPacks = [];
+  async function loadPacks() {
+    const refresh = document.getElementById('refresh-btn');
+    if (refresh) refresh.disabled = true;
+    try {
+      const response = await fetch('/api/credit-packs', {headers:{Accept:'application/json'}});
+      if (!response.ok) throw new Error('Request failed (' + response.status + ')');
+      const data = await response.json();
+      if (!Array.isArray(data)) throw new Error('Unexpected package response');
+      currentPacks = data;
+      packsEl.replaceChildren();
+      if (!data.length) {
+        const empty = document.createElement('div'); empty.className='empty';
+        const p = document.createElement('p'); p.textContent='No demo credit packs are configured.';
+        empty.appendChild(p); packsEl.appendChild(empty); return;
       }
+      data.forEach((pack, i) => {
+        const row = document.createElement('div'); row.className='pack-row';
+        const icon = document.createElement('div'); icon.className='pack-icon'; icon.textContent=String(i+1).padStart(2,'0');
+        const info = document.createElement('div'); info.className='pack-info';
+        const name = document.createElement('strong'); name.textContent=pack.name;
+        const credits = document.createElement('span'); credits.textContent=Number(pack.credits).toLocaleString('en-IN')+' credits';
+        info.append(name,credits);
+        const price = document.createElement('div'); price.className='pack-price'; price.append(document.createTextNode(money(pack.amountInPaise)));
+        const button = document.createElement('button'); button.type='button'; button.textContent='Create order'; button.addEventListener('click',()=>createOrder(pack,button));
+        price.appendChild(button); row.append(icon,info,price); packsEl.appendChild(row);
+      });
+    } catch (e) {
+      packsEl.replaceChildren();
+      const empty=document.createElement('div'); empty.className='empty';
+      const h=document.createElement('h4'); h.textContent='Could not load credit packs';
+      const p=document.createElement('p'); p.textContent='Check the backend connection and refresh this page.';
+      empty.append(h,p); packsEl.appendChild(empty);
+    } finally { if (refresh) refresh.disabled=false; }
+  }
+  async function createOrder(pack, button) {
+    if (!pack) {
+      if (!currentPacks.length) {
+        document.getElementById('result-title').textContent='Credit packs unavailable';
+        document.getElementById('result-message').textContent='Refresh data after the backend is ready.';
+        document.getElementById('result-json').textContent='';
+        resultEl.classList.add('show'); return;
+      }
+      pack=currentPacks[0];
     }
-    loadPacks();
-  </script>
+    const original=button ? button.textContent : '';
+    if(button){button.disabled=true;button.textContent='Creating…';}
+    resultEl.classList.add('show');
+    document.getElementById('result-title').textContent='Creating demo order';
+    document.getElementById('result-message').textContent='No payment will be taken.';
+    document.getElementById('result-json').textContent='';
+    try {
+      const response=await fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({packId:pack.id})});
+      const data=await response.json();
+      if(!response.ok) throw new Error(data.error || 'Order request failed ('+response.status+')');
+      document.getElementById('result-title').textContent='Demo order created';
+      document.getElementById('result-message').textContent='Status: DEMO_CREATED. This is not a payment confirmation; no money was collected and no credits were granted.';
+      document.getElementById('result-json').textContent=JSON.stringify(data,null,2);
+      resultEl.scrollIntoView({behavior:'smooth',block:'nearest'});
+    } catch(e) {
+      document.getElementById('result-title').textContent='Order could not be created';
+      document.getElementById('result-message').textContent='The backend may still be deploying the latest version.';
+      document.getElementById('result-json').textContent=String(e.message||e);
+    } finally { if(button){button.disabled=false;button.textContent=original;} }
+  }
+  function createFirstOrder(){createOrder(currentPacks[0],null);}
+  document.getElementById('refresh-btn').addEventListener('click',loadPacks);
+  ['create-top','create-empty','quick-order','orders-nav'].forEach(id=>document.getElementById(id).addEventListener('click',createFirstOrder));
+  loadPacks();
+</script>
 </body>
 </html>
