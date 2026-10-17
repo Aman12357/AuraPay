@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f7f9fc">
+  <meta name="theme-color" content="#07111f">
   <title>AuraPay Dashboard</title>
   <meta name="description" content="AuraPay merchant dashboard prototype. Development mode only; real payments are disabled.">
   <style>
@@ -50,6 +50,47 @@
     .footer{color:#7189a3}.footer a{color:#9ab5d0}
     @media(prefers-reduced-motion:no-preference){.metric,.panel{transition:border-color .2s ease,transform .2s ease}.metric:hover{border-color:#2b6389;transform:translateY(-2px)}}
 
+  
+    /* Animated cyber-arena ambience inspired by the reference site's atmosphere; original AuraPay styling. */
+    .app:before{
+      opacity:.36;
+      background-image:
+        linear-gradient(rgba(45,151,224,.075) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(45,151,224,.075) 1px,transparent 1px),
+        radial-gradient(circle at 18% 22%,rgba(0,224,255,.12) 0 1px,transparent 2px),
+        radial-gradient(circle at 78% 62%,rgba(36,168,255,.16) 0 1px,transparent 2px);
+      background-size:42px 42px,42px 42px,170px 150px,210px 190px;
+      animation: cyber-grid-drift 28s linear infinite;
+    }
+    .app:after{animation:cyber-orbit-breathe 12s ease-in-out infinite alternate;transform-origin:center}
+    .main{position:relative}
+    .main:before{
+      content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+      background:linear-gradient(180deg,transparent 0%,rgba(21,145,220,.045) 48%,transparent 100%);
+      background-size:100% 240px;animation:cyber-scan 16s linear infinite;
+    }
+    .page-head h1{letter-spacing:-1.1px}
+    .page-head h1:after{content:"";display:block;width:68px;height:2px;margin-top:12px;background:linear-gradient(90deg,#24c8ff,transparent);box-shadow:0 0 12px rgba(36,200,255,.6)}
+    .metric,.panel{transition:border-color .22s ease,transform .22s ease,box-shadow .22s ease}
+    .metric:hover,.panel:hover{border-color:#2c5d80;box-shadow:0 16px 38px rgba(0,0,0,.2),0 0 24px rgba(36,168,255,.045)}
+    .nav-item,.btn,.quick{transition:background .2s ease,border-color .2s ease,transform .2s ease,box-shadow .2s ease,color .2s ease}
+    .btn.primary:hover,.quick:hover{box-shadow:0 0 22px rgba(36,168,255,.12)}
+    .pack-row{border-color:#1b344c}
+    .pack-icon,.quick-icon{background:linear-gradient(145deg,#123553,#0c263d);color:#7edbff;border:1px solid #1d4c6b}
+    .pack-price button,.text-link,.footer a{color:#6acfff}
+    .pack-price button:hover,.text-link:hover,.footer a:hover{color:#b5edff}
+    th{background:#0b1b2c;color:#7e9bb8;border-color:#1e3851}
+    td{color:#b4c7db;border-color:#1b3046}
+    .empty-icon{background:#0b2033;border-color:#23445f;color:#7bcfff}
+    .empty h4{color:#e2f3ff}
+    .order-result{background:rgba(9,31,50,.95);border-color:#22628b;color:#eaf7ff}
+    .order-result p,.order-result pre{color:#a8c6df}
+    .footer{color:#718da8}
+    @keyframes cyber-grid-drift{from{background-position:0 0,0 0,0 0,0 0}to{background-position:84px 42px,-42px 84px,170px 150px,-210px 190px}}
+    @keyframes cyber-orbit-breathe{from{transform:scale(.94) rotate(-7deg);opacity:.62}to{transform:scale(1.05) rotate(8deg);opacity:1}}
+    @keyframes cyber-scan{from{background-position:0 -240px}to{background-position:0 calc(100vh + 240px)}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+
   </style>
 </head>
 <body>
@@ -75,40 +116,40 @@
   </aside>
   <div class="main">
     <header class="topbar">
-      <div class="crumb">Workspace <span style="padding:0 7px;color:#b0bac8">/</span> <b>Overview</b></div>
+      <div class="crumb">AURAPAY <span style="padding:0 7px;color:#4c789a">/</span> <b>Command center</b></div>
       <div class="top-actions"><span class="mode"><span class="mode-dot"></span> Test environment</span><span class="help">Help &amp; support</span><span class="avatar" aria-label="Account">A</span></div>
     </header>
     <main class="content">
       <div class="page-head">
-        <div><h1>Overview</h1><p>Here's the current status of your AuraPay workspace.</p></div>
+        <div><h1>Payment command center</h1><p>Monitor your demo checkout flow, credit catalogue, and backend status.</p></div>
         <div class="head-actions"><button class="btn" id="refresh-btn" type="button">↻ &nbsp; Refresh data</button><button class="btn primary" id="create-top" type="button">＋ &nbsp; Create demo order</button></div>
       </div>
       <section class="banner" role="status">
-        <span class="banner-icon">!</span><div><strong>Test environment · Live payments are turned off</strong><p>This dashboard is for development and order-flow testing. No real transactions, settlements, or credit grants occur here.</p></div>
+        <span class="banner-icon">!</span><div><strong>Sandbox mode · Live payments are disabled</strong><p>Use demo orders to test the order flow only. No money moves, no settlement occurs, and no credits are granted.</p></div>
       </section>
-      <div class="section-title"><h2>Account summary</h2><span>Current workspace · INR</span></div>
+      <div class="section-title"><h2>System snapshot</h2><span>Current workspace · INR</span></div>
       <section class="metrics" aria-label="Account summary">
         <article class="metric"><div class="metric-label">Available balance <span class="metric-icon">◉</span></div><div class="metric-value">₹0.00</div><div class="metric-foot">No live funds are held by AuraPay</div></article>
         <article class="metric"><div class="metric-label">Successful payments <span class="metric-icon">✓</span></div><div class="metric-value">0</div><div class="metric-foot">Live payment processing is disabled</div></article>
         <article class="metric"><div class="metric-label">Refunds <span class="metric-icon">↶</span></div><div class="metric-value">0</div><div class="metric-foot">No live transactions to refund</div></article>
         <article class="metric"><div class="metric-label">Payment success rate <span class="metric-icon">％</span></div><div class="metric-value">—</div><div class="metric-foot">Available after verified payment data exists</div></article>
       </section>
-      <div class="section-title"><h2>Activity</h2><span>Live transaction data is not connected</span></div>
+      <div class="section-title"><h2>Order telemetry</h2><span>Demo environment · no live transaction feed</span></div>
       <section class="columns">
         <article class="panel" id="transactions">
-          <div class="panel-head"><div><h3>Recent transactions</h3><p>Payments and refunds</p></div><span class="mode">Test environment</span></div>
-          <div class="empty"><div class="empty-icon">↔</div><h4>No transactions yet</h4><p>Once a verified payment provider is connected, transaction activity will appear here. Demo orders are tracked separately.</p><button class="btn primary" id="create-empty" type="button">Create demo order</button></div>
+          <div class="panel-head"><div><h3>Transaction stream</h3><p>Verified live transactions are not connected</p></div><span class="mode">Test environment</span></div>
+          <div class="empty"><div class="empty-icon">↔</div><h4>Awaiting verified transaction data</h4><p>This stream stays empty until an approved provider and trusted server-side verification are implemented. Demo orders do not count as payments.</p><button class="btn primary" id="create-empty" type="button">Create demo order</button></div>
         </article>
         <article class="panel" id="credit-packs">
-          <div class="panel-head"><div><h3>Credit packs</h3><p>Configured demo catalogue</p></div><a class="text-link" href="/api/credit-packs">View API ↗</a></div>
+          <div class="panel-head"><div><h3>Checkout catalogue</h3><p>Server-configured demo credit packs</p></div><a class="text-link" href="/api/credit-packs">View API ↗</a></div>
           <div class="packs" id="packs"><div class="empty"><p>Loading packages…</p></div></div>
         </article>
       </section>
-      <div class="section-title"><h2>Quick actions</h2><span>Development tools</span></div>
+      <div class="section-title"><h2>Developer controls</h2><span>Safe test actions</span></div>
       <section class="panel">
         <div class="quick-list">
-          <button class="quick" id="quick-order" type="button"><span class="quick-icon">＋</span><span><strong>Create a demo order</strong><small>Test the order creation endpoint with a configured credit pack.</small></span><span class="arrow">›</span></button>
-          <a class="quick" href="/api/health"><span class="quick-icon">⌁</span><span><strong>Check API health</strong><small>See whether the AuraPay backend is responding.</small></span><span class="arrow">›</span></a>
+          <button class="quick" id="quick-order" type="button"><span class="quick-icon">＋</span><span><strong>Launch demo order</strong><small>Exercise the order endpoint with a server-configured credit pack. No payment is taken.</small></span><span class="arrow">›</span></button>
+          <a class="quick" href="/api/health"><span class="quick-icon">⌁</span><span><strong>Inspect API health</strong><small>Check whether the AuraPay backend is responding.</small></span><span class="arrow">›</span></a>
           <a class="quick" href="https://github.com/Aman12357/AuraPay" target="_blank" rel="noreferrer"><span class="quick-icon">⌘</span><span><strong>Open source repository</strong><small>Review the current application code on GitHub.</small></span><span class="arrow">›</span></a>
         </div>
       </section>
