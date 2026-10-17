@@ -1,48 +1,70 @@
 # AuraPay
 
-AuraPay is a private payment integration project intended initially for the owner's AuraVision AI website only.
+AuraPay is a standalone checkout and payment-management application being built for the owner's AuraVision AI website first.
 
-## Scope and safety
+## Initial goal
 
-- Initial use case: collect payments for AuraVision AI's own products/subscriptions through an authorized payment provider.
-- AuraPay will own the checkout experience, internal order records, payment status workflow, and integration API.
-- AuraPay will not store card numbers, CVV, UPI PINs, banking passwords, or other payment credentials.
-- Do not process, pool, hold, or settle money for third-party merchants.
-- Do not enable live payments until provider onboarding, merchant approval, production database, webhook verification, and end-to-end tests are complete.
-- Test mode and simulated transactions must be clearly labeled and must never grant real paid access unless a trusted provider confirms a captured payment.
+A customer chooses an AuraVision AI credit pack, AuraPay creates an order, the customer pays using a merchant QR/payment flow, AuraPay verifies the payment through a trusted bank or authorised payment-network integration, and AuraVision AI adds the purchased credits once.
 
-## Repository status
+**This repository does not yet process real payments.** The current code is a development foundation only.
 
-This repository starts as a clean foundation. AuraVision AI is a separate Spring Boot application and already contains a Razorpay checkout/billing implementation and a webhook endpoint. Before integrating AuraPay, inspect that implementation and design a minimal, backward-compatible API contract. Do not replace or disable the existing checkout without a tested migration plan.
+## Current implementation
 
-## Planned phases
+- Java 17 + Spring Boot 3.5.x Maven project.
+- `GET /api/health`: reports that AuraPay is running and real payments are disabled.
+- `GET /api/credit-packs`: returns a starter demo catalogue. Amounts are integer INR paise.
+- Basic Spring Boot tests for these endpoints.
+- `.gitignore` excludes local environment files and build output.
 
-1. **Foundation:** define architecture, configuration, order/payment states, and security requirements.
-2. **Test-only prototype:** create orders, show checkout UI, simulate success/failure/cancellation, and persist test transactions.
-3. **AuraVision AI integration:** authenticate server-to-server requests; create orders from server-validated prices; map verified provider events to the correct AuraVision AI account.
-4. **Provider sandbox:** integrate an authorized provider's test environment; verify signatures and webhooks on the server; make webhook processing idempotent.
-5. **Production readiness:** use a persistent PostgreSQL database, HTTPS, managed secrets, access controls, audit logs, reconciliation, backups, refund/cancellation handling, and monitoring.
-6. **Live payments:** enable only after the provider approves the merchant account and all sandbox/security checks pass.
+## Important payment boundary
 
-## Non-negotiable payment rules
+A QR image by itself cannot reliably tell the website that a particular order was paid. Automatic crediting requires a trusted transaction confirmation source, such as an approved bank/merchant integration or authorised payment-network partner with transaction-status notifications or an API.
 
+AuraPay will own its checkout interface, order lifecycle, transaction ledger, and credit-grant coordination. It will not pretend to move money directly without payment-network access, and it will not treat screenshots, client redirects, or user-entered UPI reference numbers alone as proof of payment.
+
+## Safety rules
+
+- Real payments are disabled until a suitable bank/payment-network integration is approved and implemented.
+- Never store card numbers, CVV, UPI PINs, banking passwords, or other payment credentials.
 - Never trust a browser redirect or client-submitted payment status as proof of payment.
-- Never grant credits or subscriptions until a verified provider event or server-side provider lookup confirms the correct order, amount, currency, and captured/paid status.
-- Verify webhook signatures against the exact raw request body.
-- Make webhook processing idempotent so repeated events cannot grant duplicate credits.
-- Keep provider secrets in deployment environment variables or a secrets manager; never commit them to Git.
-- Keep test and live credentials separate.
-- Store amounts as integer minor units (for example, paise), with explicit currency.
-- Log transaction identifiers and state changes, not sensitive payment credentials.
+- Grant credits only after trusted server-side verification confirms the correct order, amount, currency, and successful transaction.
+- Credit grants must be idempotent so duplicate notifications cannot add credits twice.
+- Keep secrets in deployment environment variables or a secrets manager; never commit them to Git.
+- Store monetary amounts as integer minor units (paise) with an explicit currency.
+- Do not collect, pool, hold, or settle money for third-party merchants.
+- Do not enable live mode until merchant onboarding, security review, reconciliation, refund handling, and end-to-end tests are complete.
 
-## Initial architecture proposal
+## Run locally on Windows
 
-- Backend: Java 17 + Spring Boot, matching AuraVision AI's current backend stack.
-- Database: PostgreSQL for durable orders and payment events.
-- API: authenticated server-to-server order creation plus a verified provider webhook endpoint.
-- Checkout: AuraPay-branded hosted checkout that redirects to or embeds the provider's approved checkout flow.
-- Provider: choose only after confirming merchant eligibility, supported payment methods, fees, settlement terms, and current onboarding requirements.
+Requirements: JDK 17 and Maven installed.
 
-## Before live mode
+From the repository folder, run:
 
-Review the current RBI Payment Aggregator Directions and obtain qualified compliance advice if the business model changes to collecting or settling funds for other merchants. This repository is not itself authorization to operate a payment aggregator.
+```powershell
+mvn spring-boot:run
+```
+
+Then open:
+
+- `http://localhost:8080/api/health`
+- `http://localhost:8080/api/credit-packs`
+
+To run tests:
+
+```powershell
+mvn test
+```
+
+## Roadmap
+
+1. **Foundation (current):** Spring Boot app, health endpoint, demo credit-pack catalogue, and tests.
+2. **Order workflow:** create unique pending orders with server-controlled prices and authenticated user association.
+3. **Development checkout:** show an order and a clearly labelled simulated payment flow. Simulation must never be mistaken for a real payment.
+4. **QR payment discovery:** obtain bank guidance on merchant QR, dynamic QR support, transaction references, status API/webhooks, onboarding, and fees.
+5. **Verified transaction ledger:** persist orders/events, validate trusted payment confirmations, handle duplicates and refunds, and reconcile with bank records.
+6. **AuraVision AI integration:** authenticate server-to-server requests and credit the correct user only after verified payment.
+7. **Live readiness:** security review, HTTPS, persistent database, secret management, monitoring, backups, reconciliation, and approved live credentials.
+
+## Regulatory note
+
+Using AuraPay to accept payment for the owner's own products is different from operating a payment aggregator for other merchants. The actual obligations depend on the payment flow and business model. Obtain qualified guidance and the required bank/partner approvals before live transactions. If AuraPay later collects or settles funds for third-party merchants, separately review RBI authorisation and compliance requirements.
