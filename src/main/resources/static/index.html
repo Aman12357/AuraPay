@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101827">
+  <title>AuraPay | Simple, transparent checkout</title>
+  <meta name="description" content="AuraPay checkout prototype for AuraVision AI. Demo mode only; real payments are disabled.">
+  <style>
+    :root{color-scheme:dark;--bg:#0b1220;--panel:#121d30;--panel2:#17243a;--text:#eef4ff;--muted:#9eacc3;--line:#293851;--accent:#73e0c1;--accent2:#b8f5e5}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 85% 0%,#183b46 0,transparent 35%),var(--bg);color:var(--text);font:16px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    a{color:inherit}.wrap{width:min(1100px,calc(100% - 36px));margin:auto}.nav{display:flex;align-items:center;justify-content:space-between;padding:22px 0;border-bottom:1px solid var(--line)}.brand{display:flex;gap:10px;align-items:center;font-weight:800;font-size:1.2rem;letter-spacing:-.04em}.logo{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:var(--accent);color:#08231e;font-weight:900;font-size:1.15rem}.navtag{color:var(--muted);font-size:.9rem}
+    .demo{display:inline-flex;align-items:center;gap:8px;border:1px solid #715d31;color:#ffdf91;background:#332a18;border-radius:999px;padding:7px 12px;font-size:.78rem;font-weight:750;letter-spacing:.04em;text-transform:uppercase}.dot{width:7px;height:7px;border-radius:50%;background:#ffcf66}
+    .hero{padding:76px 0 42px;max-width:790px}.eyebrow{color:var(--accent);font-size:.82rem;text-transform:uppercase;letter-spacing:.14em;font-weight:800}.hero h1{font-size:clamp(2.6rem,7vw,5rem);line-height:1.02;letter-spacing:-.065em;margin:16px 0 22px}.hero h1 span{color:var(--accent)}.hero p{color:var(--muted);font-size:1.12rem;max-width:630px;margin:0 0 24px}
+    .section-head{display:flex;justify-content:space-between;gap:20px;align-items:end;margin:24px 0 18px}.section-head h2{font-size:1.55rem;letter-spacing:-.035em;margin:0}.section-head p{margin:5px 0 0;color:var(--muted);font-size:.93rem}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.pack{background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:20px;padding:24px;display:flex;flex-direction:column;min-height:260px}.pack.featured{border-color:#4b9e8a;box-shadow:0 0 0 1px #4b9e8a22}.pack h3{margin:0;font-size:1.2rem}.pack .credits{font-size:2.25rem;letter-spacing:-.05em;font-weight:800;margin:15px 0 0}.pack .unit{font-size:.88rem;color:var(--muted);font-weight:500;letter-spacing:0}.price{font-size:1.15rem;margin:2px 0 20px}.price strong{font-size:1.7rem}.pack button,.btn{border:0;border-radius:12px;background:var(--accent);color:#09251f;padding:12px 15px;font-weight:800;font-size:.95rem;cursor:pointer;text-decoration:none;display:inline-flex;justify-content:center;align-items:center;gap:8px}.pack button:hover,.btn:hover{background:var(--accent2)}button:disabled{opacity:.55;cursor:wait}.pack button{margin-top:auto;width:100%}.note{margin:22px 0 0;border:1px solid var(--line);background:#101a2a;border-radius:14px;padding:14px 16px;color:var(--muted);font-size:.9rem}.note strong{color:var(--text)}.status{display:none;margin-top:18px;background:#101a2a;border:1px solid var(--line);border-radius:16px;padding:18px;overflow-wrap:anywhere}.status.show{display:block}.status h3{margin:0 0 6px}.status pre{white-space:pre-wrap;overflow-wrap:anywhere;color:#c3d6e9;font-size:.84rem}.status .small{color:var(--muted);font-size:.85rem}.footer{margin-top:64px;padding:24px 0 36px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:16px;color:var(--muted);font-size:.86rem}.links{display:flex;gap:18px;flex-wrap:wrap}.links a{text-decoration:none}.links a:hover{color:var(--accent)}
+    @media(max-width:760px){.grid{grid-template-columns:1fr}.hero{padding-top:52px}.pack{min-height:unset}.section-head{align-items:start;flex-direction:column}.footer{flex-direction:column}.navtag{display:none}}
+  </style>
+</head>
+<body>
+  <header class="wrap nav">
+    <a class="brand" href="/" style="text-decoration:none"><span class="logo">A</span><span>AuraPay</span></a>
+    <span class="navtag">Checkout foundation for AuraVision AI</span>
+    <span class="demo"><span class="dot"></span> Demo mode</span>
+  </header>
+  <main class="wrap">
+    <section class="hero">
+      <div class="eyebrow">Checkout, made clear</div>
+      <h1>Payments should feel <span>simple.</span></h1>
+      <p>AuraPay is being built to help AuraVision AI customers purchase image-generation credits through a clear, straightforward checkout experience.</p>
+      <span class="demo"><span class="dot"></span> Demo only · No real payments</span>
+    </section>
+    <section aria-labelledby="packs-heading">
+      <div class="section-head">
+        <div><h2 id="packs-heading">Choose a credit pack</h2><p>Sample packages for testing the order flow.</p></div>
+      </div>
+      <div id="packs" class="grid" aria-live="polite"><p style="color:var(--muted)">Loading demo packages…</p></div>
+      <div class="note"><strong>Important:</strong> These are demo orders only. No money is collected, no QR payment is initiated, and no credits are added to an AuraVision AI account. Do not enter bank or payment credentials.</div>
+      <section id="order-status" class="status" aria-live="polite">
+        <h3 id="status-title">Demo order</h3>
+        <p id="status-message" class="small"></p>
+        <pre id="order-json"></pre>
+      </section>
+    </section>
+  </main>
+  <footer class="wrap footer">
+    <span>© <span id="year"></span> AuraPay · Development prototype</span>
+    <nav class="links" aria-label="Service links">
+      <a href="/api/health">API status</a>
+      <a href="/api/credit-packs">Credit pack API</a>
+      <a href="https://github.com/Aman12357/AuraPay" target="_blank" rel="noreferrer">GitHub</a>
+    </nav>
+  </footer>
+  <script>
+    const packsEl = document.getElementById('packs');
+    const statusEl = document.getElementById('order-status');
+    document.getElementById('year').textContent = new Date().getFullYear();
+    const money = paise => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(paise / 100);
+    function showError(message) {
+      packsEl.innerHTML = '<p style="color:#ffb4a9">Could not load packages. Please refresh in a moment.</p>';
+      console.error(message);
+    }
+    async function loadPacks() {
+      try {
+        const response = await fetch('/api/credit-packs', { headers: { Accept: 'application/json' } });
+        if (!response.ok) throw new Error('Credit packs request failed: ' + response.status);
+        const packs = await response.json();
+        if (!Array.isArray(packs) || packs.length === 0) throw new Error('Empty package list');
+        packsEl.replaceChildren();
+        packs.forEach((pack, index) => {
+          const article = document.createElement('article');
+          article.className = 'pack' + (index === 1 ? ' featured' : '');
+          const heading = document.createElement('h3'); heading.textContent = pack.name;
+          const credits = document.createElement('div'); credits.className = 'credits'; credits.textContent = Number(pack.credits).toLocaleString('en-IN');
+          const unit = document.createElement('span'); unit.className = 'unit'; unit.textContent = ' credits';
+          credits.appendChild(unit);
+          const price = document.createElement('p'); price.className = 'price';
+          const strong = document.createElement('strong'); strong.textContent = money(pack.amountInPaise);
+          price.appendChild(strong);
+          const button = document.createElement('button'); button.type = 'button'; button.textContent = 'Create demo order';
+          button.addEventListener('click', () => createOrder(pack, button));
+          article.append(heading, credits, price, button);
+          packsEl.appendChild(article);
+        });
+      } catch (error) { showError(error); }
+    }
+    async function createOrder(pack, button) {
+      button.disabled = true; button.textContent = 'Creating order…';
+      statusEl.classList.add('show');
+      document.getElementById('status-title').textContent = 'Creating demo order';
+      document.getElementById('status-message').textContent = 'This does not charge you or initiate a payment.';
+      document.getElementById('order-json').textContent = '';
+      try {
+        const response = await fetch('/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({ packId: pack.id })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Order creation failed');
+        document.getElementById('status-title').textContent = 'Demo order created';
+        document.getElementById('status-message').textContent = 'Status is DEMO_CREATED. No payment was taken and no credits were granted.';
+        document.getElementById('order-json').textContent = JSON.stringify(data, null, 2);
+      } catch (error) {
+        document.getElementById('status-title').textContent = 'Could not create demo order';
+        document.getElementById('status-message').textContent = 'The latest backend deployment may still be in progress. Please try again shortly.';
+        document.getElementById('order-json').textContent = String(error.message || error);
+      } finally {
+        button.disabled = false; button.textContent = 'Create demo order';
+      }
+    }
+    loadPacks();
+  </script>
+</body>
+</html>
