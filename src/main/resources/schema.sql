@@ -8,3 +8,10 @@ CREATE TABLE IF NOT EXISTS demo_orders (
     real_payments_enabled BOOLEAN NOT NULL DEFAULT FALSE,
     created_at VARCHAR(50) NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS payment_qr (
+    id INTEGER PRIMARY KEY,
+    image_data BYTEA NOT NULL,
+    content_type VARCHAR(50) NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL
+);
