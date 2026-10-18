@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AuraPay UPI Reconciliation</title>
+<style>
+:root{color-scheme:light;--bg:#f4f7fb;--card:#fff;--text:#1e293b;--muted:#64748b;--line:#dce4ef;--blue:#2457d6;--amber:#fff4d6}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,Arial,sans-serif}.wrap{max-width:900px;margin:32px auto;padding:0 16px}.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px;margin:16px 0}h1{margin:0 0 6px;font-size:26px}h2{font-size:19px;margin:0 0 10px}p{color:var(--muted)}.warning{background:var(--amber);padding:12px;border-radius:8px;color:#714e08}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}label{display:block;font-weight:650;font-size:13px;margin-bottom:5px}input,textarea,select{width:100%;padding:10px;border:1px solid var(--line);border-radius:7px;font:inherit}button{background:var(--blue);color:#fff;border:0;border-radius:7px;padding:10px 14px;font:inherit;font-weight:650;cursor:pointer}button:disabled{opacity:.55;cursor:wait}.secondary{background:#e8edf5;color:#23334a}.danger{background:#9b2c2c}.status{min-height:24px;color:var(--muted);font-size:13px}.claim{border:1px solid var(--line);border-radius:8px;padding:14px;margin:10px 0}.claim p{margin:4px 0}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.row label{display:flex;gap:8px;align-items:center;font-weight:500}.row input[type=checkbox]{width:auto}.tiny{font-size:12px}.hidden{display:none}
+</style>
+</head>
+<body><main class="wrap">
+<h1>AuraPay · UPI payment reconciliation</h1>
+<p>For personal UPI QR transfers. This page records claims and supports manual reconciliation only.</p>
+<div class="warning"><strong>Important:</strong> A UPI reference, screenshot, QR scan, or “I paid” message is not proof. Only mark a claim verified after independently confirming the matching credit in your bank/acquirer transaction records. This prototype never grants credits.</div>
+<section class="card">
+<h2>Submit a payment claim</h2>
+<p>First create a demo order in the AuraPay dashboard. Paste its order ID below. The order must match the exact amount.</p>
+<form id="claim-form">
+<div class="grid">
+<div><label for="order">AuraPay order ID</label><input id="order" required maxlength="36" placeholder="Paste orderId from the created demo order"></div>
+<div><label for="amount">Amount paid (INR)</label><input id="amount" required type="number" min="1" step="0.01" placeholder="e.g. 100.00"></div>
+<div><label for="reference">UPI reference / UTR</label><input id="reference" required minlength="6" maxlength="64" pattern="[A-Za-z0-9-]{6,64}" placeholder="Reference for reconciliation"></div>
+</div><p class="tiny">Do not upload screenshots or share your UPI PIN/OTP. Reference is unverified and is used only to help you reconcile the bank record.</p>
+<button type="submit" id="claim-button">Submit claim for review</button><div id="claim-status" class="status" role="status"></div>
+</form>
+</section>
+<section class="card">
+<h2>Admin review queue</h2>
+<p>Enter the secret configured as <code>AURAPAY_QR_ADMIN_TOKEN</code> in Render. It is sent only as a request header and is not stored by this page.</p>
+<form id="admin-form">
+<label for="token">Admin token</label><input id="token" type="password" autocomplete="off" required>
+<div class="row" style="margin-top:10px"><button type="submit">Load claims</button><button type="button" class="secondary" id="clear-token">Clear token</button></div>
+</form><div id="admin-status" class="status" role="status"></div><div id="claims"></div>
+</section>
+<p class="tiny"><a href="/">← Back to AuraPay dashboard</a> · No automatic payment verification or credit activation is enabled.</p>
+</main>
+<script>
+const byId=id=>document.getElementById(id);
+byId('claim-form').addEventListener('submit',async e=>{
+ e.preventDefault();const button=byId('claim-button'),status=byId('claim-status');button.disabled=true;status.textContent='Submitting claim…';
+ try{
+  const amount=Number(byId('amount').value);if(!Number.isFinite(amount)||amount<=0||Math.round(amount*100)<=0)throw new Error('Enter a valid amount.');
+  const res=await fetch('/api/upi-claims',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({orderId:byId('order').value.trim(),amountInPaise:Math.round(amount*100),upiReference:byId('reference').value.trim()})});
+  const data=await res.json().catch(()=>({}));if(!res.ok)throw new Error(data.message||data.error||('Request failed ('+res.status+')'));
+  status.textContent='Claim recorded as PENDING_REVIEW. No payment was verified and no credits were granted. Claim ID: '+data.claimId;
+ }catch(err){status.textContent=err.message||'Could not submit claim.'}finally{button.disabled=false}
+});
+byId('clear-token').addEventListener('click',()=>{byId('token').value='';byId('claims').replaceChildren();byId('admin-status').textContent='Token cleared.'});
+byId('admin-form').addEventListener('submit',async e=>{e.preventDefault();await loadClaims()});
+async function loadClaims(){
+ const token=byId('token').value.trim(),box=byId('claims'),status=byId('admin-status');status.textContent='Loading claims…';box.replaceChildren();
+ try{
+  const res=await fetch('/api/upi-claims',{headers:{'X-AuraPay-Admin-Token':token,'Accept':'application/json'},cache:'no-store'});const data=await res.json().catch(()=>({}));
+  if(!res.ok)throw new Error(data.message||data.error||('Request failed ('+res.status+')'));
+  status.textContent=data.length+' claim(s). Verify each payment independently in your bank/provider records before approving.';
+  data.forEach(claim=>{
+   const article=document.createElement('article');article.className='claim';
+   const title=document.createElement('strong');title.textContent=claim.status+' · '+(claim.amountInPaise/100).toLocaleString('en-IN',{style:'currency',currency:'INR'});article.append(title);
+   const details=document.createElement('p');details.textContent='Claim ID: '+claim.claimId+' | Order: '+claim.orderId;article.append(details);
+   const ref=document.createElement('p');ref.textContent='User-entered UPI reference (unverified): '+claim.upiReference;article.append(ref);
+   const created=document.createElement('p');created.className='tiny';created.textContent='Submitted: '+claim.createdAt;article.append(created);
+   if(claim.reviewNote){const note=document.createElement('p');note.textContent='Review note: '+claim.reviewNote;article.append(note)}
+   if(claim.status==='PENDING_REVIEW'){
+    const noteInput=document.createElement('input');noteInput.placeholder='Optional review note (max 500 chars)';noteInput.maxLength=500;noteInput.setAttribute('aria-label','Review note');article.append(noteInput);
+    const row=document.createElement('div');row.className='row';row.style.marginTop='10px';
+    const label=document.createElement('label'),check=document.createElement('input');check.type='checkbox';label.append(check,document.createTextNode('I independently checked the bank/provider transaction record and confirmed the exact amount and reference.'));
+    const approve=document.createElement('button');approve.textContent='Mark verified manually';approve.addEventListener('click',()=>reviewClaim(claim.claimId,'VERIFY_MANUALLY',check.checked,noteInput.value,approve));
+    const reject=document.createElement('button');reject.textContent='Reject claim';reject.className='danger';reject.addEventListener('click',()=>reviewClaim(claim.claimId,'REJECT',false,noteInput.value,reject));
+    row.append(label,approve,reject);article.append(row);
+   }
+   box.append(article);
+  });
+ }catch(err){status.textContent=err.message||'Could not load claims.'}
+}
+async function reviewClaim(id,decision,checked,note,button){
+ if(decision==='VERIFY_MANUALLY'&&!checked){byId('admin-status').textContent='Check the bank/provider record confirmation before marking verified.';return}
+ if(!confirm(decision==='VERIFY_MANUALLY'?'Confirm you checked the bank/provider record and the exact payment is credited? This does not grant credits.':'Reject this claim?'))return;
+ button.disabled=true;
+ try{
+  const res=await fetch('/api/upi-claims/'+encodeURIComponent(id)+'/review',{method:'POST',headers:{'Content-Type':'application/json','X-AuraPay-Admin-Token':byId('token').value.trim(),'Accept':'application/json'},body:JSON.stringify({decision,bankStatementChecked:checked,note})});
+  const data=await res.json().catch(()=>({}));if(!res.ok)throw new Error(data.message||data.error||('Request failed ('+res.status+')'));
+  byId('admin-status').textContent=data.message||'Review saved.';await loadClaims();
+ }catch(err){byId('admin-status').textContent=err.message||'Review failed.';button.disabled=false}
+}
+</script></body></html>
