@@ -97,7 +97,7 @@ public class UpiPaymentClaimController {
             @RequestHeader(value = "X-AuraPay-Admin-Token", required = false) String suppliedToken,
             @RequestBody ReviewRequest request) {
         requireAdmin(suppliedToken);
-        if (request == null || !List.of("VERIFY_MANUALLY", "REJECT").contains(request.decision())) {
+        if (request == null || request.decision() == null || !List.of("VERIFY_MANUALLY", "REJECT").contains(request.decision())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Decision must be VERIFY_MANUALLY or REJECT.");
         }
         if ("VERIFY_MANUALLY".equals(request.decision()) && !Boolean.TRUE.equals(request.bankStatementChecked())) {
