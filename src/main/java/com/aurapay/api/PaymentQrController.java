@@ -52,7 +52,7 @@ public class PaymentQrController {
             return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(image.contentType()))
                 .cacheControl(CacheControl.noCache())
-                .header(HttpHeaders.X_CONTENT_TYPE_OPTIONS, "nosniff")
+                .header("X-Content-Type-Options", "nosniff")
                 .body(image.bytes());
         } catch (EmptyResultDataAccessException e) {
             return ResponseEntity.notFound().build();
