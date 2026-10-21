@@ -68,3 +68,29 @@ mvn test
 ## Regulatory note
 
 Using AuraPay to accept payment for the owner's own products is different from operating a payment aggregator for other merchants. The actual obligations depend on the payment flow and business model. Obtain qualified guidance and the required bank/partner approvals before live transactions. If AuraPay later collects or settles funds for third-party merchants, separately review RBI authorisation and compliance requirements.
+
+
+## Local AI image-generation test lab (isolated, not for deployment)
+
+This experimental page uses a **local ComfyUI server** on your Windows PC. It is separate from AuraVision AI and does not use payment endpoints, credits, Cloudflare, or any hosted image API. The controller is disabled unless the dedicated Spring profile is enabled.
+
+### Requirements
+
+- Python/ComfyUI installed locally with NVIDIA GPU support.
+- A Stable Diffusion 1.5 checkpoint installed in `ComfyUI/models/checkpoints`.
+- JDK 17 and Maven.
+
+### Run on Windows
+
+1. Start ComfyUI locally, listening only on loopback, at `http://127.0.0.1:8188`. For your GTX 1650 and 8 GB RAM, start with ComfyUI's low-VRAM mode and use a 512×512 image.
+2. In the AuraPay repository folder, start the test-only profile:
+
+   ```powershell
+   mvn spring-boot:run "-Dspring-boot.run.arguments=--spring.profiles.active=local-image-lab"
+   ```
+
+3. Open `http://localhost:8080/local-image-lab.html`.
+
+The profile enables `/api/local-image-lab/*` and uses the checkpoint name in `application-local-image-lab.properties`. Change that name to exactly match a checkpoint installed locally. The first generation may be slow.
+
+**Important:** do not deploy this branch/profile to a public service. The local image lab is intended for a developer's own PC and should remain disabled on Render. This branch is a testing branch and is not the default branch.
