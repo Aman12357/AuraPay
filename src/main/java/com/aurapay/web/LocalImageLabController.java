@@ -1,7 +1,6 @@
 package com.aurapay.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
@@ -21,12 +20,10 @@ import java.util.UUID;
 public class LocalImageLabController {
     private static final String COMFY = "http://127.0.0.1:8188";
     private final RestClient http = RestClient.create();
-    private final ObjectMapper mapper;
     private final String checkpoint;
 
-    public LocalImageLabController(ObjectMapper mapper,
+    public LocalImageLabController(
             @Value("${aurapay.local-image-lab.checkpoint:v1-5-pruned-emaonly.safetensors}") String checkpoint) {
-        this.mapper = mapper;
         this.checkpoint = checkpoint;
     }
 
@@ -42,12 +39,12 @@ public class LocalImageLabController {
     }
 
     @PostMapping("/generate")
-    public ResponseEntity<?> generate(@RequestBody GenerateRequest request) {
+    public ResponseEntity<?> generate(@RequestBody(required = false) GenerateRequest request) {
         String prompt = request == null || request.prompt() == null ? "" : request.prompt().trim();
         if (prompt.isBlank() || prompt.length() > 1200) {
             return ResponseEntity.badRequest().body(Map.of("error", "Enter a prompt between 1 and 1200 characters."));
         }
-        String negative = request.negativePrompt() == null ? "blurry, low quality, distorted, watermark"
+        String negative = request == null || request.negativePrompt() == null ? "blurry, low quality, distorted, watermark"
                 : request.negativePrompt().trim();
         try {
             Map<String, Object> body = Map.of("prompt", workflow(prompt, negative), "client_id", UUID.randomUUID().toString());
@@ -102,7 +99,7 @@ public class LocalImageLabController {
         graph.put("3", Map.of("class_type", "CLIPTextEncode", "inputs", Map.of("text", negative, "clip", new String[]{"1", "1"})));
         graph.put("4", Map.of("class_type", "EmptyLatentImage", "inputs", Map.of("width", 512, "height", 512, "batch_size", 1)));
         graph.put("5", Map.of("class_type", "KSampler", "inputs", Map.of(
-                "seed", Math.abs(UUID.randomUUID().getMostSignificantBits()), "steps", 15, "cfg", 7.0,
+                "seed", (UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE), "steps", 15, "cfg", 7.0,
                 "sampler_name", "euler", "scheduler", "normal", "denoise", 1.0,
                 "model", new String[]{"1", "0"}, "positive", new String[]{"2", "0"},
                 "negative", new String[]{"3", "0"}, "latent_image", new String[]{"4", "0"})));
